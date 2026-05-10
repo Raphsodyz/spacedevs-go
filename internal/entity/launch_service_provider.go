@@ -1,6 +1,7 @@
 package entity
 
 import (
+	ProcessingStatus "github.com/spacedevs-go/internal/enum"
 	audit "github.com/spacedevs-go/model"
 )
 
@@ -11,4 +12,5 @@ type LaunchServiceProvider struct {
 	Name      *string `json:"name" db:"name" validate:"omitempty,lte=360"`
 	Type      *string `json:"type" db:"type" validate:"omitempty,lte=360"`
 	audit.Audit
+	ProcessingStatus.ProcessingStatus
 }

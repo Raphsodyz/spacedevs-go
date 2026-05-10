@@ -1,6 +1,7 @@
 package entity
 
 import (
+	ProcessingStatus "github.com/spacedevs-go/internal/enum"
 	Audit "github.com/spacedevs-go/model"
 )
 
@@ -11,4 +12,5 @@ type Status struct {
 	Abbrev      *string `json:"abbrev" db:"abbrev" validate:"omitempty,lte=360"`
 	Description *string `json:"description" db:"description" validate:"omitempty,lte=5000"`
 	Audit.Audit
+	ProcessingStatus.ProcessingStatus
 }

@@ -1,6 +1,7 @@
 package entity
 
 import (
+	ProcessingStatus "github.com/spacedevs-go/internal/enum"
 	Audit "github.com/spacedevs-go/model"
 )
 
@@ -15,4 +16,5 @@ type Configuration struct {
 	Variant         *string `json:"variant" db:"variant" validate:"omitempty,lte=360"`
 	Search          *string `json:"-" db:"search" validate:"omitempty,lte=600"`
 	Audit.Audit
+	ProcessingStatus.ProcessingStatus
 }

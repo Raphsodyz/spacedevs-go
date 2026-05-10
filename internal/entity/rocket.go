@@ -1,6 +1,7 @@
 package entity
 
 import (
+	ProcessingStatus "github.com/spacedevs-go/internal/enum"
 	Audit "github.com/spacedevs-go/model"
 )
 
@@ -10,4 +11,5 @@ type Rocket struct {
 	IdConfiguration *int64         `json:"id_configuration" db:"id_configuration" validate:"omitempty,int64"`
 	Configuration   *Configuration `json:"configuration,omitempty" db:"-"`
 	Audit.Audit
+	ProcessingStatus.ProcessingStatus
 }

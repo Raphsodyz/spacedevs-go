@@ -1,6 +1,7 @@
 package entity
 
 import (
+	ProcessingStatus "github.com/spacedevs-go/internal/enum"
 	Audit "github.com/spacedevs-go/model"
 )
 
@@ -16,4 +17,5 @@ type Mission struct {
 	LaunchDesignator *string `json:"launch_designator" db:"launch_designator" validate:"omitempty,lte=360"`
 	Search           *string `json:"-" db:"search" validate:"omitempty,lte=360"`
 	Audit.Audit
+	ProcessingStatus.ProcessingStatus
 }

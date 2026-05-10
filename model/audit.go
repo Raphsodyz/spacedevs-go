@@ -9,5 +9,5 @@ type Audit struct {
 	DateInclusion time.Time `db:"date_inclusion" validate:"required"`
 	UserChange    *string   `db:"user_change" validate:"lte=20"`
 	DateChange    time.Time `db:"date_change"`
-	EffectiveDate time.Time `db:"date_change" validate:"required"`
+	EffectiveDate time.Time `db:"effective_date" validate:"required"`
 }

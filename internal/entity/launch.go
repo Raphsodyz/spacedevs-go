@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	ProcessingStatus "github.com/spacedevs-go/internal/enum"
 	Audit "github.com/spacedevs-go/model"
 )
 
@@ -41,4 +42,5 @@ type Launch struct {
 	Programs                *string                `json:"programs" db:"programs" validate:"omitempty,lte=360"`
 	Search                  *string                `json:"-" db:"search" validate:"omitempty,lte=600"`
 	Audit.Audit
+	ProcessingStatus.ProcessingStatus
 }

@@ -1,7 +1,7 @@
 package entity
 
 import (
-	audit "github.com/spacedevs-go/internal/domain/entity/Audit"
+	Audit "github.com/spacedevs-go/model"
 )
 
 type Orbit struct {
@@ -9,5 +9,5 @@ type Orbit struct {
 	IdFromApi *int64  `json:"id_from_api" db:"id_from_api" validate:"omitempty,int64"`
 	Name      *string `json:"name" db:"name" validate:"omitempty,lte=360"`
 	Abbrev    *string `json:"abbrev" db:"abbrev" validate:"omitempty,lte=360"`
-	audit.Audit
+	Audit.Audit
 }

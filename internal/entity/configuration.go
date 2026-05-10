@@ -1,7 +1,7 @@
 package entity
 
 import (
-	audit "github.com/spacedevs-go/internal/domain/entity/Audit"
+	Audit "github.com/spacedevs-go/model"
 )
 
 type Configuration struct {
@@ -14,5 +14,5 @@ type Configuration struct {
 	FullName        *string `json:"full_name" db:"full_name" validate:"omitempty,lte=360"`
 	Variant         *string `json:"variant" db:"variant" validate:"omitempty,lte=360"`
 	Search          *string `json:"-" db:"search" validate:"omitempty,lte=600"`
-	audit.Audit
+	Audit.Audit
 }

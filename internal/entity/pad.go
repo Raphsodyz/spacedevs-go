@@ -1,7 +1,7 @@
 package entity
 
 import (
-	audit "github.com/spacedevs-go/internal/domain/entity/Audit"
+	Audit "github.com/spacedevs-go/model"
 )
 
 type Pad struct {
@@ -20,5 +20,5 @@ type Pad struct {
 	MapImage         *string   `json:"map_image" db:"map_image" validate:"omitempty,lte=1000"`
 	TotalLaunchCount *int64    `json:"total_launch_count" db:"total_launch_count" validate:"omitempty,int64"`
 	Search           *string   `json:"-" db:"search" validate:"omitempty,lte=360"`
-	audit.Audit
+	Audit.Audit
 }

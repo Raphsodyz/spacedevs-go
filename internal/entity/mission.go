@@ -1,7 +1,7 @@
 package entity
 
 import (
-	audit "github.com/spacedevs-go/internal/domain/entity/Audit"
+	Audit "github.com/spacedevs-go/model"
 )
 
 type Mission struct {
@@ -15,5 +15,5 @@ type Mission struct {
 	Orbit            *Orbit  `json:"orbit,omitempty" db:"-"`
 	LaunchDesignator *string `json:"launch_designator" db:"launch_designator" validate:"omitempty,lte=360"`
 	Search           *string `json:"-" db:"search" validate:"omitempty,lte=360"`
-	audit.Audit
+	Audit.Audit
 }

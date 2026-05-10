@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	audit "github.com/spacedevs-go/internal/domain/entity/Audit"
+	Audit "github.com/spacedevs-go/model"
 )
 
 type Launch struct {
@@ -40,5 +40,5 @@ type Launch struct {
 	Infographic             *string                `json:"infographic" db:"infographic" validate:"omitempty,lte=360"`
 	Programs                *string                `json:"programs" db:"programs" validate:"omitempty,lte=360"`
 	Search                  *string                `json:"-" db:"search" validate:"omitempty,lte=600"`
-	audit.Audit
+	Audit.Audit
 }

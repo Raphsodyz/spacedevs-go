@@ -1,7 +1,7 @@
 package entity
 
 import (
-	audit "github.com/spacedevs-go/internal/domain/entity/Audit"
+	audit "github.com/spacedevs-go/model"
 )
 
 type LaunchServiceProvider struct {

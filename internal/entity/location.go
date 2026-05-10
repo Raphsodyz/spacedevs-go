@@ -1,7 +1,7 @@
 package entity
 
 import (
-	audit "github.com/spacedevs-go/internal/domain/entity/Audit"
+	Audit "github.com/spacedevs-go/model"
 )
 
 type Location struct {
@@ -14,5 +14,5 @@ type Location struct {
 	TotalLaunchCount  *int64  `json:"total_launch_count" db:"total_launch_count" validate:"omitempty,int64"`
 	TotalLandingCount *int64  `json:"total_landing_count" db:"total_landing_count" validate:"omitempty,int64"`
 	Search            *string `json:"-" db:"search" validate:"omitempty,lte=360"`
-	audit.Audit
+	Audit.Audit
 }

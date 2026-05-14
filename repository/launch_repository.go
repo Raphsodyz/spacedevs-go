@@ -14,7 +14,7 @@ import (
 type LaunchRepository interface {
 	GetById(ctx context.Context, id int64) (*models.LaunchView, error)
 	GetIdsBySlugName(ctx context.Context, slugName string) ([]int64, error)
-	GetSearchResults(ctx context.Context, search *models.SearchLaunchRequest) ([]*models.LaunchView, error)
+	GetSearchResults(ctx context.Context, search *models.SearchLaunchFilters) (*models.SearchLaunchResponse[models.LaunchView], error)
 }
 
 type launchRepository struct {
@@ -221,7 +221,7 @@ func (r *launchRepository) GetIdsBySlugName(ctx context.Context, slugName string
 	return ids, nil
 }
 
-func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.SearchLaunchFilters) (*models.Pagination[models.LaunchView], error) {
+func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.SearchLaunchFilters) (*models.SearchLaunchResponse[models.LaunchView], error) {
 	const pageSize = 10
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 
@@ -241,7 +241,6 @@ func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.
 		return nil, fmt.Errorf("launchRepository.GetSearchResults count exec: %w", err)
 	}
 
-	// mirrors C#: entityCount % pageSize == 0 ? Ceiling(n/ps) : Ceiling(n/ps) - 1
 	totalPages := 0
 	if totalEntities > 0 {
 		totalPages = (totalEntities + pageSize - 1) / pageSize
@@ -424,7 +423,7 @@ func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.
 		return nil, fmt.Errorf("launchRepository.GetSearchResults collect: %w", err)
 	}
 
-	return &models.Pagination[models.LaunchView]{
+	return &models.SearchLaunchResponse[models.LaunchView]{
 		Entities:         entities,
 		NumberOfPages:    totalPages,
 		CurrentPage:      search.Page,

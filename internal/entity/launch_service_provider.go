@@ -1,8 +1,8 @@
 package entity
 
 import (
-	ProcessingStatus "github.com/spacedevs-go/internal/enum"
-	audit "github.com/spacedevs-go/model"
+	ProcessingStatus "github.com/Raphsodyz/spacedevs-go/internal/enum"
+	audit "github.com/Raphsodyz/spacedevs-go/models"
 )
 
 type LaunchServiceProvider struct {

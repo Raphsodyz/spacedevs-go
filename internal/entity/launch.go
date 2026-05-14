@@ -3,9 +3,9 @@ package entity
 import (
 	"time"
 
+	ProcessingStatus "github.com/Raphsodyz/spacedevs-go/internal/enum"
+	Audit "github.com/Raphsodyz/spacedevs-go/models"
 	"github.com/google/uuid"
-	ProcessingStatus "github.com/spacedevs-go/internal/enum"
-	Audit "github.com/spacedevs-go/model"
 )
 
 type Launch struct {

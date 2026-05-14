@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Raphsodyz/spacedevs-go/config"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/spacedevs-go/config"
 )
 
 func InitDb(cnfgName string) (*pgxpool.Pool, error) {

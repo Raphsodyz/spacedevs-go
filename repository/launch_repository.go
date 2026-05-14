@@ -6,9 +6,9 @@ import (
 	"time"
 
 	squirrel "github.com/Masterminds/squirrel"
+	models "github.com/Raphsodyz/spacedevs-go/models"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	models "github.com/spacedevs-go/models"
 )
 
 type LaunchRepository interface {

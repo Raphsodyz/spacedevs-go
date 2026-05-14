@@ -1,4 +1,4 @@
-package model
+package models
 
 type Pagination[T any] struct {
 	Entities         []T

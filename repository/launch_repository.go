@@ -9,10 +9,13 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	entity "github.com/spacedevs-go/internal/entity"
+	models "github.com/spacedevs-go/models"
 )
 
 type LaunchRepository interface {
 	GetById(ctx context.Context, id int64) (*entity.Launch, error)
+	GetIdsBySlugName(ctx context.Context, slugName string) ([]int64, error)
+	GetSearchResults(ctx context.Context, search *models.SearchLaunchRequest) ([]*entity.Launch, error)
 }
 
 type launchRepository struct {
@@ -259,4 +262,38 @@ func (r *launchRepository) GetById(ctx context.Context, id int64) (*entity.Launc
 	})
 
 	return launch, nil
+}
+
+func (r *launchRepository) GetIdsBySlugName(ctx context.Context, slugName string) ([]int64, error) {
+	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
+	query, args, err := pgsql.Select(
+		"l.id",
+	).
+		From("public.launch AS l").
+		Where(squirrel.ILike{"l.search": slugName}).
+		Where(squirrel.Eq{"l.status": "PUBLISHED"}).
+		Where(squirrel.Eq{"l.effective_date": time.Date(9999, time.December, 31, 0, 0, 0, 0, time.UTC)}).
+		ToSql()
+
+	if err != nil {
+		return nil, fmt.Errorf("launchRepository.GetIdsBySlugName data build: %w", err)
+	}
+
+	rows, err := r.db.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("launchRepository.GetIdsBySlugName data exec: %w", err)
+	}
+
+	defer rows.Close()
+
+	ids, err := pgx.CollectRows(rows, pgx.RowTo[int64])
+	if err != nil {
+		return nil, fmt.Errorf("launchRepository.GetIdsBySlugName collect: %w", err)
+	}
+
+	return ids, nil
+}
+
+func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.SearchLaunchRequest) ([]*entity.Launch, error) {
+
 }

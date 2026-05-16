@@ -16,6 +16,7 @@ type SearchLaunchUseCase struct {
 	locationRepo      repository.LocationRepository
 	padRepo           repository.PadRepository
 	launchRepo        repository.LaunchRepository
+	redisRepo         repository.RedisRepository
 }
 
 func NewSearchLaunchUseCase(
@@ -24,6 +25,7 @@ func NewSearchLaunchUseCase(
 	locationRepo repository.LocationRepository,
 	padRepo repository.PadRepository,
 	launchRepo repository.LaunchRepository,
+	redisRepo repository.RedisRepository,
 ) *SearchLaunchUseCase {
 	return &SearchLaunchUseCase{
 		missionRepo:       missionRepo,
@@ -31,11 +33,18 @@ func NewSearchLaunchUseCase(
 		locationRepo:      locationRepo,
 		padRepo:           padRepo,
 		launchRepo:        launchRepo,
+		redisRepo:         redisRepo,
 	}
 }
 
 func (uc *SearchLaunchUseCase) SearchByRequest(search models.SearchLaunchRequest) (*models.SearchLaunchResponse[models.LaunchView], error) {
 	ctx := context.Background()
+
+	cached, err := uc.redisRepo.GetFromSearch(ctx, search)
+	if err == nil && cached != nil {
+		return cached, nil
+	}
+
 	filters := &models.SearchLaunchFilters{}
 
 	var wg sync.WaitGroup
@@ -139,6 +148,10 @@ func (uc *SearchLaunchUseCase) SearchByRequest(search models.SearchLaunchRequest
 	result, err := uc.launchRepo.GetSearchResults(ctx, filters)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get search results: %w", err)
+	}
+
+	if setErr := uc.redisRepo.SetSearchPagination(ctx, search, result); setErr != nil {
+		fmt.Printf("search_launch_usecase.SearchByRequest: cache write failed: %v\n", setErr)
 	}
 
 	return result, nil

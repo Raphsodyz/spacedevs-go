@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func InitDb(cnfgName string) (*pgxpool.Pool, error) {
+func NewPostgresPool(cnfgName string) (*pgxpool.Pool, error) {
 	viper, err := config.LoadConfig(cnfgName)
 	if err != nil {
 		return nil, err

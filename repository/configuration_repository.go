@@ -18,6 +18,10 @@ type configurationRepository struct {
 	db *pgxpool.Pool
 }
 
+func NewConfigurationRepository(db *pgxpool.Pool) ConfigurationRepository {
+	return &configurationRepository{db: db}
+}
+
 func (r *configurationRepository) GetIdsByRocketName(ctx context.Context, rocket string) ([]int64, error) {
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 

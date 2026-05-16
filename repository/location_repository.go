@@ -18,6 +18,10 @@ type locationRepository struct {
 	db *pgxpool.Pool
 }
 
+func NewLocationRepository(db *pgxpool.Pool) LocationRepository {
+	return &locationRepository{db: db}
+}
+
 func (r *locationRepository) GetIdsByLocationName(ctx context.Context, location string) ([]int64, error) {
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 	query, args, err := pgsql.Select(

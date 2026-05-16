@@ -18,6 +18,10 @@ type padRepository struct {
 	db *pgxpool.Pool
 }
 
+func NewPadRepository(db *pgxpool.Pool) PadRepository {
+	return &padRepository{db: db}
+}
+
 func (r *padRepository) GetIdsByPadName(ctx context.Context, padName string) ([]int64, error) {
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 	query, args, err := pgsql.Select(

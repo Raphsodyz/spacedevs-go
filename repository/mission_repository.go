@@ -18,6 +18,10 @@ type missionRepository struct {
 	db *pgxpool.Pool
 }
 
+func NewMissionRepository(db *pgxpool.Pool) MissionRepository {
+	return &missionRepository{db: db}
+}
+
 func (r *missionRepository) GetIdsByMissionName(ctx context.Context, mission string) ([]int64, error) {
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 	query, args, err := pgsql.Select(

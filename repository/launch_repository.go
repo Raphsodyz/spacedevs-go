@@ -21,6 +21,10 @@ type launchRepository struct {
 	db *pgxpool.Pool
 }
 
+func NewLaunchRepository(db *pgxpool.Pool) LaunchRepository {
+	return &launchRepository{db: db}
+}
+
 func (r *launchRepository) GetById(ctx context.Context, id int64) (*models.LaunchView, error) {
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 	query, args, err := pgsql.Select(

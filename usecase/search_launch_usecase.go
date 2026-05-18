@@ -37,7 +37,7 @@ func NewSearchLaunchUseCase(
 	}
 }
 
-func (uc *SearchLaunchUseCase) SearchByRequest(search models.SearchLaunchRequest) (*models.SearchLaunchResponse[models.LaunchView], error) {
+func (uc *SearchLaunchUseCase) SearchByRequest(search models.SearchLaunchRequest) (*models.SearchLaunchResponse, error) {
 	ctx := context.Background()
 
 	cached, err := uc.redisRepo.GetFromSearch(ctx, search)

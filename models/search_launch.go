@@ -15,11 +15,11 @@ type SearchLaunchRequest struct {
 	Location *string `json:"location" validate:"omitempty,lte=360"`
 	Pad      *string `json:"pad" validate:"omitempty,lte=360"`
 	Launch   *string `json:"launch" validate:"omitempty,lte=360"`
-	Page     *int    `json:"page" validate:"omitempty,gte=0"`
+	Page     *int    `json:"page" validate:"omitempty,gte=1"`
 }
 
-type SearchLaunchResponse[T any] struct {
-	Entities         []T
+type SearchLaunchResponse struct {
+	Entities         []LaunchView
 	NumberOfPages    int
 	CurrentPage      int
 	NumberOfEntities int

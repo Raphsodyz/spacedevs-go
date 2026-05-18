@@ -1,0 +1,312 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Backend API for SpaceDevs project.",
+        "title": "SpaceDevs API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/api/v1",
+    "paths": {
+        "/launch/search": {
+            "get": {
+                "description": "Method for fuzzy search of mission, location, pad, rocket and launch.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "launch"
+                ],
+                "summary": "Search launches",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Mission name",
+                        "name": "Mission",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Location name",
+                        "name": "Location",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Pad name",
+                        "name": "Pad",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Rocket name",
+                        "name": "Rocket",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Launch name",
+                        "name": "Launch",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "Page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.SearchLaunchResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.LaunchView": {
+            "type": "object",
+            "properties": {
+                "configuration_family": {
+                    "type": "string"
+                },
+                "configuration_full_name": {
+                    "type": "string"
+                },
+                "configuration_launch_library_id": {
+                    "type": "integer"
+                },
+                "configuration_name": {
+                    "type": "string"
+                },
+                "configuration_url": {
+                    "type": "string"
+                },
+                "configuration_variant": {
+                    "type": "string"
+                },
+                "id_configuration": {
+                    "type": "string"
+                },
+                "id_launch_service_provider": {
+                    "type": "string"
+                },
+                "id_location": {
+                    "type": "string"
+                },
+                "id_mission": {
+                    "type": "string"
+                },
+                "id_orbit": {
+                    "type": "string"
+                },
+                "id_pad": {
+                    "type": "string"
+                },
+                "id_rocket": {
+                    "type": "string"
+                },
+                "id_status": {
+                    "type": "string"
+                },
+                "launch_api_guid": {
+                    "type": "string"
+                },
+                "launch_atualization_date": {
+                    "type": "string"
+                },
+                "launch_fail_reason": {
+                    "type": "string"
+                },
+                "launch_hashtag": {
+                    "type": "string"
+                },
+                "launch_hold_reason": {
+                    "type": "string"
+                },
+                "launch_id": {
+                    "type": "string"
+                },
+                "launch_image": {
+                    "type": "string"
+                },
+                "launch_imported_t": {
+                    "type": "string"
+                },
+                "launch_infographic": {
+                    "type": "string"
+                },
+                "launch_inhold": {
+                    "type": "boolean"
+                },
+                "launch_launch_library_id": {
+                    "type": "integer"
+                },
+                "launch_name": {
+                    "type": "string"
+                },
+                "launch_net": {
+                    "type": "string"
+                },
+                "launch_probability": {
+                    "type": "integer"
+                },
+                "launch_programs": {
+                    "type": "string"
+                },
+                "launch_service_provider_name": {
+                    "type": "string"
+                },
+                "launch_service_provider_type": {
+                    "type": "string"
+                },
+                "launch_service_provider_url": {
+                    "type": "string"
+                },
+                "launch_slug": {
+                    "type": "string"
+                },
+                "launch_status": {
+                    "type": "string"
+                },
+                "launch_tbd_date": {
+                    "type": "boolean"
+                },
+                "launch_tbd_time": {
+                    "type": "boolean"
+                },
+                "launch_url": {
+                    "type": "string"
+                },
+                "launch_web_cast_live": {
+                    "type": "boolean"
+                },
+                "launch_window_end": {
+                    "type": "string"
+                },
+                "launch_window_start": {
+                    "type": "string"
+                },
+                "location_country_code": {
+                    "type": "string"
+                },
+                "location_map_image": {
+                    "type": "string"
+                },
+                "location_name": {
+                    "type": "string"
+                },
+                "location_total_landing_count": {
+                    "type": "integer"
+                },
+                "location_total_launch_count": {
+                    "type": "integer"
+                },
+                "location_url": {
+                    "type": "string"
+                },
+                "mission_description": {
+                    "type": "string"
+                },
+                "mission_launch_designator": {
+                    "type": "string"
+                },
+                "mission_launch_library_id": {
+                    "type": "integer"
+                },
+                "mission_name": {
+                    "type": "string"
+                },
+                "mission_type": {
+                    "type": "string"
+                },
+                "orbit_abbrev": {
+                    "type": "string"
+                },
+                "orbit_name": {
+                    "type": "string"
+                },
+                "pad_agency_id": {
+                    "type": "integer"
+                },
+                "pad_info_url": {
+                    "type": "string"
+                },
+                "pad_latitude": {
+                    "type": "number"
+                },
+                "pad_longitude": {
+                    "type": "number"
+                },
+                "pad_map_image": {
+                    "type": "string"
+                },
+                "pad_map_url": {
+                    "type": "string"
+                },
+                "pad_name": {
+                    "type": "string"
+                },
+                "pad_total_launch_count": {
+                    "type": "integer"
+                },
+                "pad_url": {
+                    "type": "string"
+                },
+                "pad_wiki_url": {
+                    "type": "string"
+                },
+                "status_abbrev": {
+                    "type": "string"
+                },
+                "status_description": {
+                    "type": "string"
+                },
+                "status_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.SearchLaunchResponse": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "entities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.LaunchView"
+                    }
+                },
+                "numberOfEntities": {
+                    "type": "integer"
+                },
+                "numberOfPages": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

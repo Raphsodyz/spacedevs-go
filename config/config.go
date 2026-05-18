@@ -9,9 +9,9 @@ import (
 )
 
 type Config struct {
-	Server      ServerConfig
-	PostgresSql PostgresqlConfig
-	Redis       RedisConfig
+	Server     ServerConfig
+	Postgresql PostgresqlConfig
+	Redis      RedisConfig
 }
 
 type ServerConfig struct {
@@ -56,6 +56,7 @@ func LoadConfig(filename string) (*viper.Viper, error) {
 
 	v.AddConfigPath("./config")
 	v.SetConfigName(filename)
+	v.SetConfigType("yml")
 	v.AutomaticEnv()
 
 	err := v.ReadInConfig()

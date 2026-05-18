@@ -12,11 +12,11 @@ server:
   CSRF: true
   Debug: false
 
-postgres:
+postgresql:
   PostgresqlHost: localhost
   PostgresqlPort: 5432
-  PostgresqlUser: postgres
-  PostgresqlPassword: postgres
+  PostgresqlUser: spacedevs_user
+  PostgresqlPassword: Spacedevs123456
   PostgresqlDbname: spacedevs
   PostgresqlSslmode: false
   PgDriver: pgx

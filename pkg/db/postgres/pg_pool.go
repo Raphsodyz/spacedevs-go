@@ -20,7 +20,7 @@ func NewPostgresPool(cnfgName string) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
-	pg := cnfg.PostgresSql
+	pg := cnfg.Postgresql
 	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		pg.PostgresqlUser,
 		pg.PostgresqlPassword,

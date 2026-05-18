@@ -1,5 +1,10 @@
 package main
 
+// @title SpaceDevs API
+// @version 1.0
+// @description Backend API for SpaceDevs project.
+// @BasePath /api/v1
+
 import (
 	"log"
 
@@ -7,7 +12,7 @@ import (
 )
 
 func main() {
-	srv, err := bootstrap.NewServer("config-local")
+	srv, err := bootstrap.NewServer("config_development")
 	if err != nil {
 		log.Fatalf("failed to bootstrap server: %v", err)
 	}

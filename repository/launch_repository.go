@@ -14,7 +14,7 @@ import (
 type LaunchRepository interface {
 	GetById(ctx context.Context, id int64) (*models.LaunchView, error)
 	GetIdsBySlugName(ctx context.Context, slugName string) ([]int64, error)
-	GetSearchResults(ctx context.Context, search *models.SearchLaunchFilters) (*models.SearchLaunchResponse[models.LaunchView], error)
+	GetSearchResults(ctx context.Context, search *models.SearchLaunchFilters) (*models.SearchLaunchResponse, error)
 }
 
 type launchRepository struct {
@@ -95,7 +95,7 @@ func (r *launchRepository) GetById(ctx context.Context, id int64) (*models.Launc
 		"location_total_launch_count",
 		"location_total_landing_count",
 	).
-		From("public.launch_view").
+		From("data.launch_view").
 		Where(squirrel.Eq{"launch_id": id}).
 		ToSql()
 
@@ -200,7 +200,7 @@ func (r *launchRepository) GetIdsBySlugName(ctx context.Context, slugName string
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 
 	query, args, err := pgsql.Select("l.id").
-		From("public.launch AS l").
+		From("data.launch AS l").
 		Where(squirrel.ILike{"l.search": slugName}).
 		Where(squirrel.Eq{"l.status": "PUBLISHED"}).
 		Where(squirrel.Eq{"l.effective_date": time.Date(9999, time.December, 31, 0, 0, 0, 0, time.UTC)}).
@@ -225,12 +225,12 @@ func (r *launchRepository) GetIdsBySlugName(ctx context.Context, slugName string
 	return ids, nil
 }
 
-func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.SearchLaunchFilters) (*models.SearchLaunchResponse[models.LaunchView], error) {
+func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.SearchLaunchFilters) (*models.SearchLaunchResponse, error) {
 	const pageSize = 10
 	var pgsql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 
 	countQuery, countArgs, err := pgsql.Select("COUNT(*)").
-		From("public.launch_view").
+		From("data.launch_view").
 		Where(buildSearchFilters(search)).
 		ToSql()
 
@@ -326,7 +326,7 @@ func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.
 		"location_total_launch_count",
 		"location_total_landing_count",
 	).
-		From("public.launch_view").
+		From("data.launch_view").
 		Where(buildSearchFilters(search)).
 		OrderBy("launch_id").
 		Limit(pageSize).
@@ -427,7 +427,7 @@ func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.
 		return nil, fmt.Errorf("launchRepository.GetSearchResults collect: %w", err)
 	}
 
-	return &models.SearchLaunchResponse[models.LaunchView]{
+	return &models.SearchLaunchResponse{
 		Entities:         entities,
 		NumberOfPages:    totalPages,
 		CurrentPage:      search.Page,

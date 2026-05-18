@@ -11,10 +11,22 @@ SET row_security = off;
 SET default_tablespace = '';
 SET default_table_access_method = heap;
 
-CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+CREATE DATABASE spacedevs;
+CREATE SCHEMA data;
+CREATE SCHEMA app;
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA data;
 COMMENT ON EXTENSION pg_trgm IS 'Text similarity measurement and index searching based on trigrams.';
 
-CREATE TABLE IF NOT EXISTS public.orbit(
+CREATE ROLE spacedevs_user
+WITH LOGIN
+PASSWORD 'Spacedevs123456';
+
+GRANT CONNECT ON DATABASE spacedevs TO spacedevs_user;
+GRANT USAGE ON SCHEMA data TO spacedevs_user;
+GRANT USAGE ON SCHEMA app TO spacedevs_user;
+
+CREATE TABLE IF NOT EXISTS data.orbit(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     name VARCHAR(360) NULL,
@@ -27,14 +39,14 @@ CREATE TABLE IF NOT EXISTS public.orbit(
     status VARCHAR(15) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.mission(
+CREATE TABLE IF NOT EXISTS data.mission(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     launch_library_id INT NULL,
     name VARCHAR(360) NULL,
     description VARCHAR(5000) NULL,
     type VARCHAR(360) NULL,
-    id_orbit UUID NULL,
+    id_orbit BIGINT NULL,
     launch_designator VARCHAR(360) NULL,
     search VARCHAR(360) GENERATED ALWAYS AS (
         LOWER(name)
@@ -46,10 +58,10 @@ CREATE TABLE IF NOT EXISTS public.mission(
     effective_date DATE NOT NULL,
     status VARCHAR(15) NOT NULL,
 
-    CONSTRAINT fk_mission_orbit FOREIGN KEY (id_orbit) REFERENCES public.orbit(id)
+    CONSTRAINT fk_mission_orbit FOREIGN KEY (id_orbit) REFERENCES data.orbit(id)
 );
 
-CREATE TABLE IF NOT EXISTS public.configuration(
+CREATE TABLE IF NOT EXISTS data.configuration(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     launch_library_id INT NULL,
@@ -69,7 +81,7 @@ CREATE TABLE IF NOT EXISTS public.configuration(
     status VARCHAR(15) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.status(
+CREATE TABLE IF NOT EXISTS data.status(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     name VARCHAR(360) NULL,
@@ -83,7 +95,7 @@ CREATE TABLE IF NOT EXISTS public.status(
     status VARCHAR(15) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.launch_service_provider(
+CREATE TABLE IF NOT EXISTS data.launch_service_provider(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     url VARCHAR(1000) NULL,
@@ -97,7 +109,7 @@ CREATE TABLE IF NOT EXISTS public.launch_service_provider(
     status VARCHAR(15) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.location(
+CREATE TABLE IF NOT EXISTS data.location(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     url VARCHAR(1000) NULL,
@@ -117,7 +129,7 @@ CREATE TABLE IF NOT EXISTS public.location(
     status VARCHAR(15) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS public.pad(
+CREATE TABLE IF NOT EXISTS data.pad(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     url VARCHAR(1000) NULL,
@@ -141,10 +153,10 @@ CREATE TABLE IF NOT EXISTS public.pad(
     effective_date DATE NOT NULL,
     status VARCHAR(15) NOT NULL,
 
-    CONSTRAINT fk_pad_location FOREIGN KEY (id_location) REFERENCES public.location(id)
+    CONSTRAINT fk_pad_location FOREIGN KEY (id_location) REFERENCES data.location(id)
 );
 
-CREATE TABLE IF NOT EXISTS public.rocket(
+CREATE TABLE IF NOT EXISTS data.rocket(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     id_configuration BIGINT NULL,
@@ -153,12 +165,12 @@ CREATE TABLE IF NOT EXISTS public.rocket(
     user_change VARCHAR(20) NULL,
     date_change TIMESTAMP WITHOUT TIME ZONE NULL,
     effective_date DATE NOT NULL,
-    status VARCHAR(15) NOT NULL
+    status VARCHAR(15) NOT NULL,
 
-    CONSTRAINT fk_rocket_configuration FOREIGN KEY(id_configuration) REFERENCES public.configuration(id)
+    CONSTRAINT fk_rocket_configuration FOREIGN KEY (id_configuration) REFERENCES data.configuration(id)
 );
 
-CREATE TABLE IF NOT EXISTS public.launch(
+CREATE TABLE IF NOT EXISTS data.launch(
     id BIGINT PRIMARY KEY,
     id_from_api INT NULL,
     api_guid UUID NOT NULL,
@@ -193,16 +205,16 @@ CREATE TABLE IF NOT EXISTS public.launch(
     user_change VARCHAR(20) NULL,
     date_change TIMESTAMP WITHOUT TIME ZONE NULL,
     effective_date DATE NOT NULL,
-    status VARCHAR(15) NOT NULL
+    status VARCHAR(15) NOT NULL,
 
-    CONSTRAINT fk_launch_status FOREIGN KEY (id_status) REFERENCES public.status(id),
-    CONSTRAINT fk_launch_launch_service_provider FOREIGN KEY (id_launch_service_provider) REFERENCES public.launch_service_provider(id),
-    CONSTRAINT fk_launch_rocket FOREIGN KEY (id_rocket) REFERENCES public.rocket(id),
-    CONSTRAINT fk_launch_mission FOREIGN KEY (id_mission) REFERENCES public.mission(id),
-    CONSTRAINT fk_launch_pad FOREIGN KEY (id_pad) REFERENCES public.pad(id)
+    CONSTRAINT fk_launch_status FOREIGN KEY (id_status) REFERENCES data.status(id),
+    CONSTRAINT fk_launch_launch_service_provider FOREIGN KEY (id_launch_service_provider) REFERENCES data.launch_service_provider(id),
+    CONSTRAINT fk_launch_rocket FOREIGN KEY (id_rocket) REFERENCES data.rocket(id),
+    CONSTRAINT fk_launch_mission FOREIGN KEY (id_mission) REFERENCES data.mission(id),
+    CONSTRAINT fk_launch_pad FOREIGN KEY (id_pad) REFERENCES data.pad(id)
 );
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS public.launch_view AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS data.launch_view AS
     SELECT
         l.id AS launch_id,
         l.status AS launch_status,
@@ -268,42 +280,57 @@ CREATE MATERIALIZED VIEW IF NOT EXISTS public.launch_view AS
         loc.total_launch_count AS location_total_launch_count,
         loc.total_landing_count AS location_total_landing_count
     FROM
-        public.launch AS l
-        LEFT JOIN public.status AS s ON l.id_status = s.id AND s.status = 'PUBLISHED' AND s.effective_date = DATE '9999-12-31'
-        LEFT JOIN public.launch_service_provider AS lsp ON l.id_launch_service_provider = lsp.id AND l.status = 'PUBLISHED' AND l.effective_date = DATE '9999-12-31'
-        LEFT JOIN public.rocket AS r ON l.id_rocket = r.id AND l.status = 'PUBLISHED' AND l.effective_date = DATE '9999-12-31'
-        LEFT JOIN public.configuration AS c ON r.id_configuration = c.id AND r.status = 'PUBLISHED' AND r.effective_date = DATE '9999-12-31'
-        LEFT JOIN public.mission AS m ON l.id_mission = m.id AND m.status = 'PUBLISHED' AND m.effective_date = DATE '9999-12-31'
-        LEFT JOIN public.orbit AS o ON m.id_orbit = o.id AND o.status = 'PUBLISHED' AND o.effective_date = DATE '9999-12-31'
-        LEFT JOIN public.pad AS p ON l.id_pad = p.id AND p.status = 'PUBLISHED' AND p.effective_date = DATE '9999-12-31'
-        LEFT JOIN public.location AS loc ON p.id_location = loc.id AND loc.status = 'PUBLISHED' AND loc.effective_date = DATE '9999-12-31'
+        data.launch AS l
+        LEFT JOIN data.status AS s ON l.id_status = s.id AND s.status = 'PUBLISHED' AND s.effective_date = DATE '9999-12-31'
+        LEFT JOIN data.launch_service_provider AS lsp ON l.id_launch_service_provider = lsp.id AND l.status = 'PUBLISHED' AND l.effective_date = DATE '9999-12-31'
+        LEFT JOIN data.rocket AS r ON l.id_rocket = r.id AND l.status = 'PUBLISHED' AND l.effective_date = DATE '9999-12-31'
+        LEFT JOIN data.configuration AS c ON r.id_configuration = c.id AND r.status = 'PUBLISHED' AND r.effective_date = DATE '9999-12-31'
+        LEFT JOIN data.mission AS m ON l.id_mission = m.id AND m.status = 'PUBLISHED' AND m.effective_date = DATE '9999-12-31'
+        LEFT JOIN data.orbit AS o ON m.id_orbit = o.id AND o.status = 'PUBLISHED' AND o.effective_date = DATE '9999-12-31'
+        LEFT JOIN data.pad AS p ON l.id_pad = p.id AND p.status = 'PUBLISHED' AND p.effective_date = DATE '9999-12-31'
+        LEFT JOIN data.location AS loc ON p.id_location = loc.id AND loc.status = 'PUBLISHED' AND loc.effective_date = DATE '9999-12-31'
     WHERE
         l.status = 'PUBLISHED'
-        AND l.effective_date = DATE '9999-12-31'
+        AND l.effective_date = DATE '9999-12-31';
 
-CREATE INDEX IDX_GIST_LAUNCH_SLUG_NAME ON public.launch USING gist (search public.gist_trgm_ops);
-CREATE INDEX IDX_GIST_CONFIGURATION_NAME_FAMILY ON public.configuration USING gist (search public.gist_trgm_ops);
-CREATE INDEX IDX_GIST_MISSION_NAME ON public.mission USING gist (search public.gist_trgm_ops);
-CREATE INDEX IDX_GIST_LOCATION_NAME ON public.location USING gist (search public.gist_trgm_ops);
-CREATE INDEX IDX_GIST_PAD_NAME ON public.pad USING gist (search public.gist_trgm_ops);
+CREATE INDEX IDX_GIST_LAUNCH_SLUG_NAME ON data.launch USING gist (search data.gist_trgm_ops);
+CREATE INDEX IDX_GIST_CONFIGURATION_NAME_FAMILY ON data.configuration USING gist (search data.gist_trgm_ops);
+CREATE INDEX IDX_GIST_MISSION_NAME ON data.mission USING gist (search data.gist_trgm_ops);
+CREATE INDEX IDX_GIST_LOCATION_NAME ON data.location USING gist (search data.gist_trgm_ops);
+CREATE INDEX IDX_GIST_PAD_NAME ON data.pad USING gist (search data.gist_trgm_ops);
 
-CREATE INDEX idx_mission_id_orbit ON public.mission USING btree(id_orbit);
-CREATE INDEX idx_pad_id_location ON public.pad USING btree(id_location);
-CREATE INDEX idx_rocket_id_configuration ON public.rocket USING btree(id_configuration);
-CREATE INDEX idx_launch_id_status ON public.launch USING btree(id_status);
-CREATE INDEX idx_launch_id_launch_service_provider ON public.launch USING btree(id_launch_service_provider);
-CREATE INDEX idx_launch_id_rocket ON public.launch USING btree(id_rocket);
-CREATE INDEX idx_launch_id_mission ON public.launch USING btree(id_mission);
-CREATE INDEX idx_launch_id_pad ON public.launch USING btree(id_pad);
+CREATE INDEX idx_mission_id_orbit ON data.mission USING btree(id_orbit);
+CREATE INDEX idx_pad_id_location ON data.pad USING btree(id_location);
+CREATE INDEX idx_rocket_id_configuration ON data.rocket USING btree(id_configuration);
+CREATE INDEX idx_launch_id_status ON data.launch USING btree(id_status);
+CREATE INDEX idx_launch_id_launch_service_provider ON data.launch USING btree(id_launch_service_provider);
+CREATE INDEX idx_launch_id_rocket ON data.launch USING btree(id_rocket);
+CREATE INDEX idx_launch_id_mission ON data.launch USING btree(id_mission);
+CREATE INDEX idx_launch_id_pad ON data.launch USING btree(id_pad);
 
-CREATE INDEX idx_configuration_effective_date ON public.configuration USING btree(effective_date);
-CREATE INDEX idx_launch_service_provider_effective_date ON public.launch_service_provider USING btree(effective_date);
-CREATE INDEX idx_launch_effective_date ON public.launch USING btree(effective_date);
-CREATE INDEX idx_location_effective_date ON public.location USING btree(effective_date);
-CREATE INDEX idx_mission_effective_date ON public.mission USING btree(effective_date);
-CREATE INDEX idx_orbit_effective_date ON public.orbit USING btree(effective_date);
-CREATE INDEX idx_pad_effective_date ON public.pad USING btree(effective_date);
-CREATE INDEX idx_rocket_effective_date ON public.rocket USING btree(effective_date);
-CREATE INDEX idx_status_effective_date ON public.status USING btree(effective_date);
+CREATE INDEX idx_configuration_effective_date ON data.configuration USING btree(effective_date);
+CREATE INDEX idx_launch_service_provider_effective_date ON data.launch_service_provider USING btree(effective_date);
+CREATE INDEX idx_launch_effective_date ON data.launch USING btree(effective_date);
+CREATE INDEX idx_location_effective_date ON data.location USING btree(effective_date);
+CREATE INDEX idx_mission_effective_date ON data.mission USING btree(effective_date);
+CREATE INDEX idx_orbit_effective_date ON data.orbit USING btree(effective_date);
+CREATE INDEX idx_pad_effective_date ON data.pad USING btree(effective_date);
+CREATE INDEX idx_rocket_effective_date ON data.rocket USING btree(effective_date);
+CREATE INDEX idx_status_effective_date ON data.status USING btree(effective_date);
 
-SET search_path TO "$user", public;
+GRANT SELECT, INSERT, UPDATE, DELETE
+ON ALL TABLES IN SCHEMA data
+TO spacedevs_user;
+
+GRANT USAGE, SELECT
+ON ALL SEQUENCES IN SCHEMA data
+TO spacedevs_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA data
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO spacedevs_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA data
+GRANT USAGE, SELECT ON SEQUENCES TO spacedevs_user;
+
+ALTER ROLE spacedevs_user
+SET search_path TO data, app, public;

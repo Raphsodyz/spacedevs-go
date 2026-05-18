@@ -17,8 +17,8 @@ const (
 )
 
 type RedisRepository interface {
-	GetFromSearch(ctx context.Context, search models.SearchLaunchRequest) (*models.SearchLaunchResponse[models.LaunchView], error)
-	SetSearchPagination(ctx context.Context, search models.SearchLaunchRequest, result *models.SearchLaunchResponse[models.LaunchView]) error
+	GetFromSearch(ctx context.Context, search models.SearchLaunchRequest) (*models.SearchLaunchResponse, error)
+	SetSearchPagination(ctx context.Context, search models.SearchLaunchRequest, result *models.SearchLaunchResponse) error
 }
 
 type redisRepository struct {
@@ -29,7 +29,7 @@ func NewRedisRepository(client *redis.Client) RedisRepository {
 	return &redisRepository{client: client}
 }
 
-func (r *redisRepository) GetFromSearch(ctx context.Context, search models.SearchLaunchRequest) (*models.SearchLaunchResponse[models.LaunchView], error) {
+func (r *redisRepository) GetFromSearch(ctx context.Context, search models.SearchLaunchRequest) (*models.SearchLaunchResponse, error) {
 	key, err := buildSearchCacheKey(search)
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (r *redisRepository) GetFromSearch(ctx context.Context, search models.Searc
 		return nil, err
 	}
 
-	var result models.SearchLaunchResponse[models.LaunchView]
+	var result models.SearchLaunchResponse
 	if err := json.Unmarshal(val, &result); err != nil {
 		return nil, fmt.Errorf("redisRepository.GetFromSearch unmarshal: %w", err)
 	}
@@ -48,7 +48,7 @@ func (r *redisRepository) GetFromSearch(ctx context.Context, search models.Searc
 	return &result, nil
 }
 
-func (r *redisRepository) SetSearchPagination(ctx context.Context, search models.SearchLaunchRequest, result *models.SearchLaunchResponse[models.LaunchView]) error {
+func (r *redisRepository) SetSearchPagination(ctx context.Context, search models.SearchLaunchRequest, result *models.SearchLaunchResponse) error {
 	key, err := buildSearchCacheKey(search)
 	if err != nil {
 		return err

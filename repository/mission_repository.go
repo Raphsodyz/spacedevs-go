@@ -27,7 +27,7 @@ func (r *missionRepository) GetIdsByMissionName(ctx context.Context, mission str
 	query, args, err := pgsql.Select(
 		"m.id",
 	).
-		From("public.mission AS m").
+		From("data.mission AS m").
 		Where(squirrel.ILike{"m.search": mission}).
 		Where(squirrel.Eq{"m.status": "PUBLISHED"}).
 		Where(squirrel.Eq{"m.effective_date": time.Date(9999, time.December, 31, 0, 0, 0, 0, time.UTC)}).

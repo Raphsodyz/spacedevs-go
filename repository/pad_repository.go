@@ -28,7 +28,7 @@ func (r *padRepository) GetIdsByPadName(ctx context.Context, padName string) ([]
 		"p.id",
 	).
 		From("data.pad AS p").
-		Where(squirrel.ILike{"p.name": padName}).
+		Where(squirrel.ILike{"p.name": "%" + padName + "%"}).
 		Where(squirrel.Eq{"p.status": "PUBLISHED"}).
 		Where(squirrel.Eq{"p.effective_date": time.Date(9999, time.December, 31, 0, 0, 0, 0, time.UTC)}).
 		ToSql()

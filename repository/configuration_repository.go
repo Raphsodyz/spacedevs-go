@@ -30,7 +30,7 @@ func (r *configurationRepository) GetIdsByRocketName(ctx context.Context, rocket
 	).
 		From("data.configuration AS c").
 		Join("data.rocket AS r ON c.id = r.id_configuration").
-		Where(squirrel.ILike{"r.search": rocket}).
+		Where(squirrel.ILike{"c.search": "%" + rocket + "%"}).
 		Where(squirrel.Eq{"c.status": "PUBLISHED"}).
 		Where(squirrel.Eq{"c.effective_date": time.Date(9999, time.December, 31, 0, 0, 0, 0, time.UTC)}).
 		ToSql()

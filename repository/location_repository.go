@@ -28,7 +28,7 @@ func (r *locationRepository) GetIdsByLocationName(ctx context.Context, location 
 		"l.id",
 	).
 		From("data.location AS l").
-		Where(squirrel.ILike{"l.search": location}).
+		Where(squirrel.ILike{"l.search": "%" + location + "%"}).
 		Where(squirrel.Eq{"l.status": "PUBLISHED"}).
 		Where(squirrel.Eq{"l.effective_date": time.Date(9999, time.December, 31, 0, 0, 0, 0, time.UTC)}).
 		ToSql()

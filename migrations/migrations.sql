@@ -12,17 +12,18 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 CREATE DATABASE spacedevs;
+CREATE ROLE spacedevs_user
+WITH LOGIN
+PASSWORD 'Spacedevs123456';
+
+GRANT CONNECT ON DATABASE spacedevs TO spacedevs_user;
+
 CREATE SCHEMA data;
 CREATE SCHEMA app;
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA data;
 COMMENT ON EXTENSION pg_trgm IS 'Text similarity measurement and index searching based on trigrams.';
 
-CREATE ROLE spacedevs_user
-WITH LOGIN
-PASSWORD 'Spacedevs123456';
-
-GRANT CONNECT ON DATABASE spacedevs TO spacedevs_user;
 GRANT USAGE ON SCHEMA data TO spacedevs_user;
 GRANT USAGE ON SCHEMA app TO spacedevs_user;
 

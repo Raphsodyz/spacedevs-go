@@ -201,7 +201,7 @@ func (r *launchRepository) GetIdsBySlugName(ctx context.Context, slugName string
 
 	query, args, err := pgsql.Select("l.id").
 		From("data.launch AS l").
-		Where(squirrel.ILike{"l.search": slugName}).
+		Where(squirrel.ILike{"l.search": "%" + slugName + "%"}).
 		Where(squirrel.Eq{"l.status": "PUBLISHED"}).
 		Where(squirrel.Eq{"l.effective_date": time.Date(9999, time.December, 31, 0, 0, 0, 0, time.UTC)}).
 		ToSql()
@@ -243,6 +243,13 @@ func (r *launchRepository) GetSearchResults(ctx context.Context, search *models.
 
 	if err != nil {
 		return nil, fmt.Errorf("launchRepository.GetSearchResults count exec: %w", err)
+	}
+
+	if totalEntities == 0 {
+		return &models.SearchLaunchResponse{
+			NumberOfEntities: 0,
+			Entities:         []models.LaunchView{},
+		}, nil
 	}
 
 	totalPages := 0

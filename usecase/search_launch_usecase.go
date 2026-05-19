@@ -150,6 +150,10 @@ func (uc *SearchLaunchUseCase) SearchByRequest(search models.SearchLaunchRequest
 		return nil, fmt.Errorf("failed to get search results: %w", err)
 	}
 
+	if result.NumberOfEntities == 0 {
+		return result, nil
+	}
+
 	if setErr := uc.redisRepo.SetSearchPagination(ctx, search, result); setErr != nil {
 		fmt.Printf("search_launch_usecase.SearchByRequest: cache write failed: %v\n", setErr)
 	}

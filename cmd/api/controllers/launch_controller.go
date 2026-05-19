@@ -32,6 +32,7 @@ func NewLaunchController(searchUC usecase.SearchLaunchUseCase) *LaunchController
 // @Param Launch query string false "Launch name"
 // @Param Page query int false "Page number"
 // @Success 200 {object} models.SearchLaunchResponse
+// @Success 204 {object} nil
 // @Failure 400 {object} map[string]interface{}
 // @Failure 500 {object} map[string]interface{}
 // @Router /launch/search [get]

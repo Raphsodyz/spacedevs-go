@@ -73,6 +73,9 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.SearchLaunchResponse"
                         }
                     },
+                    "204": {
+                        "description": "No Content"
+                    },
                     "400": {
                         "description": "Bad Request",
                         "schema": {

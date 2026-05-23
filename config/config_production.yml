@@ -3,7 +3,7 @@ server:
   port:              ":5000"
   pprofport:         ":5555"
   mode:              "Production"
-  jwtsecretkey:      "secretkey"
+  jwtsecretkey:      ""
   cookiename:        "jwt-token"
   readtimeout:       5
   writetimeout:      5
@@ -13,16 +13,16 @@ server:
   debug:             false
 
 postgresql:
-  host:     "localhost"
+  host:     "postgresql"
   port:     "5432"
-  user:     "spacedevs_user"
-  password: "Spacedevs123456"
+  user:     ""
+  password: ""
   db:       "spacedevs"
   sslmode:  false
   driver:   "pgx"
 
 redis:
-  addr:         "localhost:6379"
+  addr:         "redis:6379"
   password:     ""
   db:           0
   minidleconns: 200

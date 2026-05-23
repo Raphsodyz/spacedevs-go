@@ -10,24 +10,25 @@ import (
 )
 
 func NewPostgresPool(cnfgName string) (*pgxpool.Pool, error) {
-	viper, err := config.LoadConfig(cnfgName)
+	vpr, err := config.LoadConfig(cnfgName)
 	if err != nil {
 		return nil, err
 	}
 
-	cnfg, err := config.ParseConfig(viper)
+	cnfg, err := config.ParseConfig(vpr)
 	if err != nil {
 		return nil, err
 	}
 
 	pg := cnfg.Postgresql
-	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		pg.PostgresqlUser,
-		pg.PostgresqlPassword,
-		pg.PostgresqlHost,
-		pg.PostgresqlPort,
-		pg.PostgresqlDbname,
-		boolToSSLMode(pg.PostgresqlSSLMode),
+	connectionString := fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		pg.User,
+		pg.Password,
+		pg.Host,
+		pg.Port,
+		pg.Db,
+		boolToSSLMode(pg.Sslmode),
 	)
 
 	pool, err := pgxpool.New(context.Background(), connectionString)
@@ -48,6 +49,5 @@ func boolToSSLMode(enabled bool) string {
 	if enabled {
 		return "require"
 	}
-
 	return "disable"
 }

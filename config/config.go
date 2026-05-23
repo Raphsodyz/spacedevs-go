@@ -30,25 +30,22 @@ type ServerConfig struct {
 }
 
 type PostgresqlConfig struct {
-	PostgresqlHost     string
-	PostgresqlPort     string
-	PostgresqlUser     string
-	PostgresqlPassword string
-	PostgresqlDbname   string
-	PostgresqlSSLMode  bool
-	PgDriver           string
+	Host     string
+	Port     string
+	User     string
+	Password string
+	Db       string
+	Sslmode  bool
+	Driver   string
 }
 
 type RedisConfig struct {
-	RedisAddr      string
-	RedisPassword  string
-	RedisDB        string
-	RedisDefaultdb string
-	MinIdleConns   int
-	PoolSize       int
-	PoolTimeout    int
-	Password       string
-	DB             int
+	Addr         string
+	Password     string
+	Db           int
+	MinIdleConns int
+	PoolSize     int
+	PoolTimeout  int
 }
 
 func LoadConfig(filename string) (*viper.Viper, error) {
@@ -57,14 +54,13 @@ func LoadConfig(filename string) (*viper.Viper, error) {
 	v.AddConfigPath("./config")
 	v.SetConfigName(filename)
 	v.SetConfigType("yml")
+
 	v.AutomaticEnv()
 
-	err := v.ReadInConfig()
-	if err != nil {
+	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return nil, errors.New("Attention! Config file not found.")
+			return nil, errors.New("config file not found")
 		}
-
 		return nil, err
 	}
 
@@ -74,9 +70,8 @@ func LoadConfig(filename string) (*viper.Viper, error) {
 func ParseConfig(v *viper.Viper) (*Config, error) {
 	var c Config
 
-	err := v.Unmarshal(&c)
-	if err != nil {
-		log.Printf("Attention! Unable to decode into struct %v", err)
+	if err := v.Unmarshal(&c); err != nil {
+		log.Printf("unable to decode config into struct: %v", err)
 		return nil, err
 	}
 

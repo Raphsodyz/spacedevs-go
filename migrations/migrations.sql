@@ -11,10 +11,10 @@ SET row_security = off;
 SET default_tablespace = '';
 SET default_table_access_method = heap;
 
-CREATE DATABASE spacedevs;
-CREATE ROLE spacedevs_user
+--CREATE DATABASE spacedevs;
+/*CREATE ROLE spacedevs_user
 WITH LOGIN
-PASSWORD 'Spacedevs123456';
+PASSWORD 'Spacedevs123456';*/
 
 GRANT CONNECT ON DATABASE spacedevs TO spacedevs_user;
 

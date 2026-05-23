@@ -1,0 +1,82 @@
+version: '3.9'
+
+volumes:
+  spacedevs-pgdata:
+  spacedevs-redis-data:
+
+networks:
+  default:
+    driver: bridge
+    name: spacedevs-network
+
+services:
+  postgresql:
+    image: "postgres:16.3-alpine"
+    hostname: postgresql
+    container_name: spacedevs-postgresql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    volumes:
+      - spacedevs-pgdata:/var/lib/postgresql/data
+      - ./migrations/migrations.sql:/migrations/migrations.sql:ro
+      - ./migrations/seed/spacedevs_data.sql:/migrations/seed/spacedevs_data.sql:ro
+      - ./migrations/seeddatabase.sh:/docker-entrypoint-initdb.d/seeddatabase.sh:ro
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB}
+      TZ:                UTC
+      PGTZ:              UTC
+
+  redis:
+    image: "redis:7.2-alpine"
+    hostname: redis
+    container_name: spacedevs-redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    volumes:
+      - spacedevs-redis-data:/data
+    command: ["redis-server", "--appendonly", "yes", "--loglevel", "warning"]
+
+  api:
+    build:
+      context: .
+      dockerfile: dockerfile
+    hostname: api
+    container_name: spacedevs-api
+    restart: unless-stopped
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      TZ:      UTC
+      APP_ENV: production
+      POSTGRES_USER:     ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB}
+
+  nginx:
+    image: "nginx:1.27-alpine"
+    hostname: nginx
+    container_name: spacedevs-nginx
+    restart: unless-stopped
+    depends_on:
+      - api
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "7000:7000"
+    expose:
+      - "7000"

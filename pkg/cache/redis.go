@@ -20,9 +20,9 @@ const (
 
 func NewRedisClient(cfg *config.Config) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
-		Addr:            cfg.Redis.RedisAddr,
+		Addr:            cfg.Redis.Addr,
 		Password:        cfg.Redis.Password,
-		DB:              cfg.Redis.DB,
+		DB:              cfg.Redis.Db,
 		MinIdleConns:    cfg.Redis.MinIdleConns,
 		PoolSize:        cfg.Redis.PoolSize,
 		PoolTimeout:     time.Duration(cfg.Redis.PoolTimeout) * time.Second,
@@ -38,7 +38,7 @@ func NewRedisClient(cfg *config.Config) (*redis.Client, error) {
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		return nil, fmt.Errorf("redis: failed to connect to %s: %w", cfg.Redis.RedisAddr, err)
+		return nil, fmt.Errorf("redis: failed to connect to %s: %w", cfg.Redis.Addr, err)
 	}
 
 	return client, nil

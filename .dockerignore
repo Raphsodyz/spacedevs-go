@@ -1,0 +1,42 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE / Editor
+.vscode
+.idea
+*.code-workspace
+
+# Build outputs
+spacedevs-api
+cmd/api/__debug_bin*
+*.exe
+
+# Test artifacts
+*.test
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+
+# Environment / secrets
+.env
+*.env.*
+
+# Docker files (not needed inside the image)
+dockerfile
+docker-compose*.yml
+nginx.conf
+
+# Documentation that isn't served at runtime
+README.md
+LICENSE
+
+# Go workspace
+go.work
+go.work.sum
+
+# OS artefacts
+.DS_Store
+Thumbs.db

@@ -9,18 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func NewPostgresPool(cnfgName string) (*pgxpool.Pool, error) {
-	vpr, err := config.LoadConfig(cnfgName)
-	if err != nil {
-		return nil, err
-	}
-
-	cnfg, err := config.ParseConfig(vpr)
-	if err != nil {
-		return nil, err
-	}
-
-	pg := cnfg.Postgresql
+func NewPostgresPool(pg config.PostgresConfig) (*pgxpool.Pool, error) {
 	connectionString := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		pg.User,

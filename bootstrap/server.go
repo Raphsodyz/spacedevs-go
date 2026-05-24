@@ -39,12 +39,12 @@ func NewServer(configName string) (*Server, error) {
 		return nil, fmt.Errorf("bootstrap.NewServer: failed to parse config: %w", err)
 	}
 
-	db, err := postgres.NewPostgresPool(configName)
+	db, err := postgres.NewPostgresPool(cfg.Postgres)
 	if err != nil {
 		return nil, fmt.Errorf("bootstrap.NewServer: failed to init postgres: %w", err)
 	}
 
-	redisClient, err := rediscache.NewRedisClient(cfg)
+	redisClient, err := rediscache.NewRedisClient(cfg.Redis)
 	if err != nil {
 		return nil, fmt.Errorf("bootstrap.NewServer: failed to init redis: %w", err)
 	}

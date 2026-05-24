@@ -33,3 +33,4 @@ go.work.sum
 
 spacedevs-api
 cmd/api/__debug_bin.exe
+tmp/build-errors.log

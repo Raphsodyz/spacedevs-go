@@ -18,14 +18,14 @@ const (
 	writeTimeout    = 3 * time.Second
 )
 
-func NewRedisClient(cfg *config.Config) (*redis.Client, error) {
+func NewRedisClient(redisCfg config.RedisConfig) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
-		Addr:            cfg.Redis.Addr,
-		Password:        cfg.Redis.Password,
-		DB:              cfg.Redis.Db,
-		MinIdleConns:    cfg.Redis.MinIdleConns,
-		PoolSize:        cfg.Redis.PoolSize,
-		PoolTimeout:     time.Duration(cfg.Redis.PoolTimeout) * time.Second,
+		Addr:            redisCfg.Addr,
+		Password:        redisCfg.Password,
+		DB:              redisCfg.Db,
+		MinIdleConns:    redisCfg.MinIdleConns,
+		PoolSize:        redisCfg.PoolSize,
+		PoolTimeout:     time.Duration(redisCfg.PoolTimeout) * time.Second,
 		MaxRetries:      maxRetries,
 		MinRetryBackoff: minRetryBackoff,
 		MaxRetryBackoff: maxRetryBackoff,

@@ -5,14 +5,14 @@ server:
   mode:              "Production"
   jwtsecretkey:      ""
   cookiename:        "jwt-token"
-  readtimeout:       5
-  writetimeout:      5
+  readtimeout:       5s
+  writetimeout:      5s
   ssl:               false
-  ctxdefaulttimeout: 12
+  ctxdefaulttimeout: 12s
   csrf:              false
   debug:             false
 
-postgresql:
+postgres:
   host:     "postgresql"
   port:     "5432"
   user:     ""

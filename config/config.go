@@ -9,43 +9,43 @@ import (
 )
 
 type Config struct {
-	Server     ServerConfig
-	Postgresql PostgresqlConfig
-	Redis      RedisConfig
+	Server   ServerConfig   `mapstructure:"server"`
+	Postgres PostgresConfig `mapstructure:"postgres"`
+	Redis    RedisConfig    `mapstructure:"redis"`
 }
 
 type ServerConfig struct {
-	AppVersion        string
-	Port              string
-	PprofPort         string
-	Mode              string
-	JwtSecretKey      string
-	CookieName        string
-	ReadTimeout       time.Duration
-	WriteTimeout      time.Duration
-	SSL               bool
-	CtxDefaultTimeout time.Duration
-	CSRF              bool
-	Debug             bool
+	AppVersion        string        `mapstructure:"appversion"`
+	Port              string        `mapstructure:"port"`
+	PprofPort         string        `mapstructure:"pprofport"`
+	Mode              string        `mapstructure:"mode"`
+	JwtSecretKey      string        `mapstructure:"jwtsecretkey"`
+	CookieName        string        `mapstructure:"cookiename"`
+	ReadTimeout       time.Duration `mapstructure:"readtimeout"`
+	WriteTimeout      time.Duration `mapstructure:"writetimeout"`
+	SSL               bool          `mapstructure:"ssl"`
+	CtxDefaultTimeout time.Duration `mapstructure:"ctxdefaulttimeout"`
+	CSRF              bool          `mapstructure:"csrf"`
+	Debug             bool          `mapstructure:"debug"`
 }
 
-type PostgresqlConfig struct {
-	Host     string
-	Port     string
-	User     string
-	Password string
-	Db       string
-	Sslmode  bool
-	Driver   string
+type PostgresConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     string `mapstructure:"port"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+	Db       string `mapstructure:"db"`
+	Sslmode  bool   `mapstructure:"sslmode"`
+	Driver   string `mapstructure:"driver"`
 }
 
 type RedisConfig struct {
-	Addr         string
-	Password     string
-	Db           int
-	MinIdleConns int
-	PoolSize     int
-	PoolTimeout  int
+	Addr         string `mapstructure:"addr"`
+	Password     string `mapstructure:"password"`
+	Db           int    `mapstructure:"db"`
+	MinIdleConns int    `mapstructure:"minidleconns"`
+	PoolSize     int    `mapstructure:"poolsize"`
+	PoolTimeout  int    `mapstructure:"pooltimeout"`
 }
 
 func LoadConfig(filename string) (*viper.Viper, error) {
@@ -55,14 +55,16 @@ func LoadConfig(filename string) (*viper.Viper, error) {
 	v.SetConfigName(filename)
 	v.SetConfigType("yml")
 
-	v.AutomaticEnv()
-
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			return nil, errors.New("config file not found")
 		}
 		return nil, err
 	}
+
+	v.BindEnv("postgres.user", "POSTGRES_USER")
+	v.BindEnv("postgres.password", "POSTGRES_PASSWORD")
+	v.BindEnv("postgres.db", "POSTGRES_DB")
 
 	return v, nil
 }

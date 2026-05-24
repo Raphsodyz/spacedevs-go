@@ -2,7 +2,7 @@ server:
   appversion:        "1.0.0"
   port:              ":5000"
   pprofport:         ":5555"
-  mode:              "Production"
+  mode:              "Development"
   jwtsecretkey:      "secretkey"
   cookiename:        "jwt-token"
   readtimeout:       5
@@ -12,7 +12,7 @@ server:
   csrf:              false
   debug:             false
 
-postgresql:
+postgres:
   host:     "localhost"
   port:     "5432"
   user:     "spacedevs_user"
